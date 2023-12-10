@@ -11,7 +11,7 @@ Dengan demikian, insiden dan bahaya dapat diantisipasi dan ditangani secara proa
 <img src= "Documents/Rangkaian Skematik (Proteus).jpg"  width="60%" height="30%">
 
 <p align="center">
-<a href=""><strong>Click here to explore the Report »</strong></a>
+<a src="Documents/B-10.pdf"><strong>Click here to explore the Report »</strong></a>
 
 <p align="center">
 <a href="https://www.canva.com/design/DAF2c1gNOHk/eZOWZygkRRGGKIpZU_bsJQ/edit?utm_content=DAF2c1gNOHk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"><strong>Click here to See Our Presentation Deck! »</strong></a>
