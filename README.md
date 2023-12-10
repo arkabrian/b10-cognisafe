@@ -8,7 +8,7 @@ CogniSafe ditujukan bagi pengawas dan manajer laboratorium untuk memastikan kese
 Dengan demikian, insiden dan bahaya dapat diantisipasi dan ditangani secara proaktif. CogniSafe bertujuan meningkatkan standar keselamatan serta menciptakan lingkungan kerja yang lebih aman bagi personel laboratorium.
 
 <p align="center">
-<img src= "image.png"  width="60%" height="30%">
+<img src= "Documents/Rangkaian Skematik (Proteus).jpg"  width="60%" height="30%">
 
 <p align="center">
 <a href=""><strong>Click here to explore the Report »</strong></a>
