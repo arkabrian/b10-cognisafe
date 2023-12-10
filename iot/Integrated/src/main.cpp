@@ -23,7 +23,7 @@ float prevAccX = 0.0, prevAccY = 0.0, prevAccZ = 0.0;
 // MQTT Configuration
 const char* ssid = "CogniSafe";
 const char* password = "12345678";
-const char* mqtt_server = "192.168.137.1";
+const char* mqtt_server = "172.173.157.174";
 const int mqtt_port = 1883; // Port for MQTT over WebSockets
 
 WiFiClient espClient;
