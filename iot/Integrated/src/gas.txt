@@ -1,0 +1,44 @@
+// #include <freertos/FreeRTOS.h>
+// #include <freertos/task.h>
+
+// #define DO_PIN 14  // ESP32's pin GPIO14 connected to DO pin of the MQ2 sensor
+// #define AO_PIN 4  // ESP32's pin GPIO14 connected to AO pin of the MQ2 sensor
+
+// void readMQ2Sensor(void *parameter) {
+//   while(1) {
+//     int gasValue = analogRead(AO_PIN);
+//       if (gasValue > 1550 == HIGH){
+//         Serial.println("The gas is present");
+//         Serial.print("MQ2 sensor AO value: ");
+//         Serial.println(gasValue);
+//       }
+//       else {
+//         Serial.println("The gas is NOT present");
+//       }
+ 
+//     vTaskDelay(500 / portTICK_PERIOD_MS); // wait for the MQ2 to warm up
+//   }
+// }
+
+// void setup() {
+//   // initialize serial communication
+//   Serial.begin(115200);
+
+//   // initialize the ESP32's pin as an input
+//   pinMode(DO_PIN, INPUT);
+
+//   Serial.println("Warming up the MQ2 sensor");
+//   delay(20000);  // wait for the MQ2 to warm up
+
+//   // Create a task to read analog values from the MQ2 sensor
+//   xTaskCreatePinnedToCore(
+//       readMQ2Sensor,   /* Task function. */
+//       "readMQ2Sensor", /* Name of task. */
+//       10000,           /* Stack size of task */
+//       NULL,            /* parameter of the task */
+//       1,               /* priority of the task */
+//       NULL,            /* Task handle to keep track of created task */
+//       1);              /* Core (0 or 1) to run the task on */
+// }
+
+// void loop() {}

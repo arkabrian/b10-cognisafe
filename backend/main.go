@@ -38,13 +38,17 @@ func SubscribeHandler(client mqtt.Client) http.HandlerFunc {
 	}
 }
 
-func MQTTMessageHandler(client mqtt.Client, msg mqtt.Message) {
-	fmt.Printf("Received message on topic '%s': %s\n", msg.Topic(), string(msg.Payload()))
+func MQTTMessageHandlerFall(client mqtt.Client, msg mqtt.Message) {
+	fmt.Println(msg.Topic(), string(msg.Payload()))
+}
+
+func MQTTMessageHandlerGas(client mqtt.Client, msg mqtt.Message) {
+	fmt.Println(msg.Topic(), string(msg.Payload()))
 }
 
 func main() {
 	opts := mqtt.NewClientOptions()
-	opts.AddBroker("tcp://127.0.0.1:1883") // MQTT broker URL
+	opts.AddBroker("tcp://172.173.157.174:1883") // MQTT broker URL
 	opts.SetClientID("cognisafe")
 
 	client = mqtt.NewClient(opts)
@@ -53,7 +57,8 @@ func main() {
 	}
 
 	// Subscribe to a specific topic to listen to MQTT messages
-	client.Subscribe("greeting", 0, MQTTMessageHandler)
+	client.Subscribe("Fall", 0, MQTTMessageHandlerFall)
+	client.Subscribe("Gas", 0, MQTTMessageHandlerGas)
 
 	http.HandleFunc("/publish", PublishHandler(client))
 	http.HandleFunc("/subscribe", SubscribeHandler(client))
