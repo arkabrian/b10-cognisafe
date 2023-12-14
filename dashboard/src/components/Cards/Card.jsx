@@ -1,74 +1,123 @@
-import React, { Component } from 'react';
-import mqtt from 'mqtt';
+import React, { Component } from "react";
+import { FaUser, FaInfoCircle } from "react-icons/fa";
 
 class Card extends Component {
   state = {
-    client: null,
-    fallState: null,
-    gasValue: null,
+    fallStatus: 0,
+    gasStatus: 1,
+    uptime: 0, // Add uptime state
   };
 
   componentDidMount() {
-    const client = mqtt.connect("mqtt://172.173.157.174:1883");
-    client.on('connect', () => {
-      console.log('masuk');
-      client.subscribe('Gas');
-      client.subscribe('Fall');
-      console.log('berhasil subskrep');
-    });
-    client.on('message', (topic, message) => {
-      switch (topic) {
-        case 'Gas':
-          const gasValue = parseInt(message.toString());
-          this.setState({ gasValue });
-          break;
-        case 'Fall':
-          const fallState = message.toString() === '1';
-          this.setState({ fallState });
-          break;
-        default:
-          break;
+    fetch("http://localhost:4141/mqtt/subscribe")
+    .then(response => {
+      if (response.ok) {
+        // If the response is successful (status code 200), set subscribe success to true
+        this.setState({ subscribeSuccess: true });
       }
+    })
+    .catch(error => {
+      console.error("Error subscribing:", error);
     });
-    this.setState({ client });
+
+    this.intervalM = setInterval(() => {
+      if (this.state.subscribeSuccess) {
+        fetch("http://localhost:4141/mqtt/getData")
+          .then(response => response.json())
+          .then(data => {
+            // Update state with the received data (assuming your API returns fall and gas fields)
+            this.setState({
+              fallStatus: data.fall,
+              gasStatus: data.gas
+            });
+          })
+          .catch(error => {
+            console.error("Error fetching data:", error);
+          });
+      }
+    }, 1000);
+
+    // Function to update uptime every second
+    this.intervalU = setInterval(() => {
+      this.setState((prevState) => ({ uptime: prevState.uptime + 1 }));
+    }, 1000);
+
+
   }
 
   componentWillUnmount() {
-    if (this.state.client) {
-      this.state.client.end();
-    }
+    clearInterval(this.intervalU);
+    clearInterval(this.intervalM);
   }
-  
-  
+
+  formatUptime(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedSeconds =
+      remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+  }
+
   render() {
-    const { number } = this.props;
-    const { gasValue, fallState } = this.state;
+    const { fallStatus, gasStatus, uptime } = this.state;
+    const { number, ipAddress, macAddress } = this.props;
 
     return (
       <div className="rounded-lg bg-gray-700 mx-5 shadow-md justify-between px-4 py-3">
-        <ul>
-          <li className="flex justify-between my-2">
-            <span className="text-white font-bold text-sm mr-2">Device {number}</span>
-            <span className="text-gray-300 text-xs">Uptime: 02:14:21</span>
-          </li>
-          <li className="flex justify-between mt-2">
-            <span className="text-gray-300 text-xs">MAC Address: 'Whatecer'</span>
-          </li>
-          <li className="flex justify-between mt-2">
-            <span className="text-white text-sm">Gas Sensor: </span>
-            <span className="text-gray-300 text-xs">{gasValue ? gasValue : '-'}</span>
-          </li>
-          <li className="flex justify-between mt-2">
-            <span className="text-white text-sm">Fall Detection:</span>
-            <span className="text-gray-300 text-xs">
-              {fallState ? (fallStateConfirmed ? 'Falling' : 'Pending Confirmation') : 'Safe'}
-            </span>
-          </li>
-          <li className="mt-2 flex">
-            <div className="flex-shrink-0 bg-red-500 rounded-full w-4 h-4 mr-2"></div>
-            <span className="text-gray-300 text-xs">BOCOR GAN</span>
-          </li>
-        </ul>
+        {/* Person 1 */}
+        <div className="text-white font-bold text-xl mb-2">{`Person ${number}`}</div>
+
+        {/* Uptime */}
+        <div className="text-gray-300 mb-2">{`Uptime ${this.formatUptime(
+          uptime
+        )}`}</div>
+
+        {/* Centered person icon */}
+        <div className="flex justify-center mb-2">
+          <FaUser size={40} color="#fff" />
+        </div>
+
+        {/* IP Address and Mac Address Info */}
+        <div className="text-gray-300 mb-2">
+          <FaInfoCircle className="mb-3" />
+          <table className="w-full border-collapse">
+            <tbody>
+              <tr className="border-t border-white text-left text-sm">
+                <td className="py-2 pr-4">IP Addr.</td>
+                <td className="py-2">{ipAddress}</td>
+              </tr>
+              <tr className="border-t border-b border-white text-left text-sm">
+                <td className="py-2 pr-4">MAC Addr.</td>
+                <td className="py-2">{macAddress}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Gas and Fall status */}
+        <div className="flex justify-between mt-4 mb-2 ">
+          <div className="status-box">
+            <div className="status-title">Gas Status</div>
+            <div
+              className={`status-circle ${
+                gasStatus === 0 ? "status-green" : "status-red"
+              }`}
+            ></div>
+          </div>
+          <div className="status-box">
+            <div className="status-title">Fall Status</div>
+            <div
+              className={`status-circle ${
+                fallStatus === 0 ? "status-green" : "status-red"
+              }`}
+            ></div>
+          </div>
+        </div>
       </div>
     );
   }

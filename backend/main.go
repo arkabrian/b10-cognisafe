@@ -132,14 +132,18 @@ func defineMultiplexer(l *log.Logger, q *sqlc.Queries) http.Handler {
 	// if this decoded it will have a payload of session id
 	// It will be stored inside local pc
 	mux.HandleFunc("/lab/startSession", lab_handler.CreateLabSessionH)
+	mux.HandleFunc("/lab/attendance", lab_handler.AttendenceSessionH)
+	mux.HandleFunc("/lab/getAttendances", lab_handler.GetPerson)
+
 	mux.HandleFunc("/mqtt/subscribe", mqtt_handler.SubscribeHandler)
+	mux.HandleFunc("/mqtt/getData", mqtt_handler.GetFallGasDataH)
 
 	// it will return a token based on a certain criteria
 	// the user is in the same network/ip
 	// decode the token inside cookie
 	// it will have a payload of
 	// the user requested in the range of lab session
-	mux.HandleFunc("/lab/attendence", lab_handler.AttendenceSessionH)
+
 	// mux.HandleFunc("/lab/report", token_handler.RenewToken)
 	// // log event
 	// mux.HandleFunc("/lab/log", nil)

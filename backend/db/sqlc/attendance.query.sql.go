@@ -37,25 +37,27 @@ func (q *Queries) Attend(ctx context.Context, arg AttendParams) (Attendance, err
 }
 
 const getValidAttendance = `-- name: GetValidAttendance :many
-SELECT lab_session_id, ip_address, mac_address, fall, gas FROM Attendance
+SELECT lab_session_id,
+    ip_address,
+    mac_address FROM Attendance
 `
 
-func (q *Queries) GetValidAttendance(ctx context.Context) ([]Attendance, error) {
+type GetValidAttendanceRow struct {
+	LabSessionID string `json:"lab_session_id"`
+	IpAddress    string `json:"ip_address"`
+	MacAddress   string `json:"mac_address"`
+}
+
+func (q *Queries) GetValidAttendance(ctx context.Context) ([]GetValidAttendanceRow, error) {
 	rows, err := q.db.QueryContext(ctx, getValidAttendance)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Attendance
+	var items []GetValidAttendanceRow
 	for rows.Next() {
-		var i Attendance
-		if err := rows.Scan(
-			&i.LabSessionID,
-			&i.IpAddress,
-			&i.MacAddress,
-			&i.Fall,
-			&i.Gas,
-		); err != nil {
+		var i GetValidAttendanceRow
+		if err := rows.Scan(&i.LabSessionID, &i.IpAddress, &i.MacAddress); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

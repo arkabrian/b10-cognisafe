@@ -1,28 +1,20 @@
-import { useState } from 'react'
 import './App.css'
-import Sidebar from './components/Sidebar/Sidebar';
-import Cards from './components/Cards/Cards';
+import {
+  Route,
+  Routes,
+} from "react-router-dom";
+import HomePage from "./page/home";
 
 const App = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
-  return (
-    <>
-      <div className="flex">
-      {/* Your main content */}
-      <div className="flex-1">
-        {/* Content goes here */}
-      </div>
-      {/* Sidebar */}
-      <Sidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-      <Cards />
-    </div>
-    </>
-  )
+  <>
+  <HomePage />
+      {/* <AuthProvider> */}
+        {/* <Routes>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<HomePage />} />
+        </Routes> */}
+      {/* </AuthProvider> */}
+    </>  
 }
 
 export default App

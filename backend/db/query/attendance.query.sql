@@ -6,4 +6,6 @@ INSERT INTO Attendance (
 ) VALUES ( $1, $2, $3 ) RETURNING *;
 
 -- name: GetValidAttendance :many
-SELECT * FROM Attendance; 
+SELECT lab_session_id,
+    ip_address,
+    mac_address FROM Attendance; 

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"database/sql"
+	"fmt"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -31,10 +32,21 @@ func StringToNullString(s string) sql.NullString {
 
 func StringToNullTime(s string) sql.NullTime {
 	if s != "" {
-		t, err := time.Parse(time.RFC3339, s)
+		// Set the location to the local time zone
+		loc, err := time.LoadLocation("Asia/Jakarta")
+		if err != nil {
+			// handle the error, for example, return an sql.NullTime with Valid=false
+			fmt.Println("Error loading location:", err)
+			return sql.NullTime{Valid: false}
+		}
+
+		t, err := time.ParseInLocation(time.RFC3339, s, loc)
 		if err == nil {
+			fmt.Println(t)
 			return sql.NullTime{Time: t, Valid: true}
 		}
+		// handle the error, for example, return an sql.NullTime with Valid=false
+		fmt.Println("Error parsing time:", err)
 	}
 	return sql.NullTime{Valid: false}
 }

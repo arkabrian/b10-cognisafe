@@ -28,6 +28,22 @@ func (lh *LabHandler) AttendenceSessionH(w http.ResponseWriter, r *http.Request)
 	lh.h.handleRequest(hp, lh.h.u)
 }
 
+func (lh *LabHandler) GetPerson(w http.ResponseWriter, r *http.Request) {
+	hp := HandlerParam{w, r, http.MethodGet, lh.getPerson}
+	lh.h.handleRequest(hp, lh.h.u)
+}
+
+func (lh *LabHandler) getPerson(w http.ResponseWriter, r *http.Request) error {
+	valid_attendance, err := lh.h.q.GetValidAttendance(r.Context())
+	if err != nil {
+		http.Error(w, "Error getting data", http.StatusBadRequest)
+		return err
+	}
+
+	toJSON(w, valid_attendance)
+	return nil
+}
+
 func (lh *LabHandler) createLabSession(w http.ResponseWriter, r *http.Request) error {
 	// Parse form data
 	if err := r.ParseForm(); err != nil {
@@ -125,8 +141,12 @@ func (lh *LabHandler) attendance(w http.ResponseWriter, r *http.Request) error {
 
 	currentTime := time.Now()
 
+	lh.h.l.Println(currentTime)
+	lh.h.l.Println(payload.StartTime)
+	lh.h.l.Println(payload.EndTime)
+
 	if currentTime.Before(payload.StartTime) || currentTime.After(payload.EndTime) {
-		http.Error(w, "Error "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error request is not within the payload's time range", http.StatusInternalServerError)
 		return fmt.Errorf("request is not within the payload's time range")
 	}
 

@@ -24,6 +24,11 @@ func (mqqt_h *MQTTHandler) GetFallGasDataH(w http.ResponseWriter, r *http.Reques
 	mqqt_h.h.handleRequest(hp, nil)
 }
 
+type data_return struct {
+	Fall int32 `json:"fall"`
+	Gas  int32 `json:"gas"`
+}
+
 func (mqqt_h *MQTTHandler) getFallGasData(w http.ResponseWriter, r *http.Request) error {
 	data, err := mqqt_h.h.q.GetFallGasData(r.Context())
 	if err != nil {
@@ -31,7 +36,11 @@ func (mqqt_h *MQTTHandler) getFallGasData(w http.ResponseWriter, r *http.Request
 		return errors.New("cannot get data")
 	}
 
-	toJSON(w, data)
+	data_return := data_return{
+		Fall: data.Fall.Int32,
+		Gas:  data.Gas.Int32,
+	}
+	toJSON(w, data_return)
 	return nil
 }
 
@@ -48,14 +57,14 @@ func (mqqt_h *MQTTHandler) subscribe(w http.ResponseWriter, r *http.Request) err
 	}
 
 	for _, topic := range attendances {
-		topicFall := topic.IpAddress + "/" + topic.MacAddress + "/Fall"
+		topicFall := topic.MacAddress + "/Fall"
 		if token := mqqt_h.mqttClient.Subscribe(topicFall, 0, MQTTMessageHandlerFall); token.Wait() && token.Error() != nil {
 			mqqt_h.h.l.Println(token.Error())
 			return errors.New("cannot Subscribe")
 		}
 		mqqt_h.h.l.Println("Success subscribed to topic", topicFall)
 
-		topicGas := topic.IpAddress + "/" + topic.MacAddress + "/Gas"
+		topicGas := topic.MacAddress + "/Gas"
 		if token2 := mqqt_h.mqttClient.Subscribe(topicGas, 0, MQTTMessageHandlerGas); token2.Wait() && token2.Error() != nil {
 			mqqt_h.h.l.Println(token2.Error())
 			return errors.New("cannot Subscribe")
