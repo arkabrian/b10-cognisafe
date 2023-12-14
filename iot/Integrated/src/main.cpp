@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 // #include <Wire.h>
 // #include <MPU6050.h>
 // #include <HTTPClient.h>
@@ -145,6 +147,7 @@
 // }
 
 
+>>>>>>> d6f641f6392e6eb8b2a1ea2ca9b04f44a6a4f247
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 #include <Wire.h>
@@ -241,7 +244,10 @@ void readMQ2Sensor(void *parameter) {
       else {
         Serial.println("Gas: Not Detected");
       }
+<<<<<<< HEAD
+=======
  
+>>>>>>> d6f641f6392e6eb8b2a1ea2ca9b04f44a6a4f247
     vTaskDelay(500 / portTICK_PERIOD_MS); // wait for the MQ2 to warm up
   }
 }
@@ -317,6 +323,7 @@ void setup() {
       1,
       NULL,
       1);
+<<<<<<< HEAD
 
   // xTaskCreatePinnedToCore(
   //     buzzerTask, 
@@ -327,6 +334,18 @@ void setup() {
   //     NULL, 
   //     1);
 
+=======
+
+  // xTaskCreatePinnedToCore(
+  //     buzzerTask, 
+  //     "Buzzer", 
+  //     2048, 
+  //     NULL, 
+  //     1, 
+  //     NULL, 
+  //     1);
+
+>>>>>>> d6f641f6392e6eb8b2a1ea2ca9b04f44a6a4f247
 }
 
 void loop() {

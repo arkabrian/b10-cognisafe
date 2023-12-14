@@ -1,9 +1,10 @@
-// MainContent.js
-
 import React, { useState } from 'react';
+import Card from './Card';
+import LabRegist from './LabRegist';
 
 const Cards = () => {
   const [cardRows, setCardRows] = useState([[]]);
+  const [showForm, setShowForm] = useState(true);
 
   const addCard = (rowIndex) => {
     const newCardRows = [...cardRows];
@@ -15,17 +16,19 @@ const Cards = () => {
     setCardRows(newCardRows);
   };
 
+  const handleFormSubmit = (formData) => {
+    // Handle form submission (you can log it for now)
+    console.log('Form submitted:', formData);
+    setShowForm(false); // Hide the form after submission
+  };
+
   return (
     <div className="p-4">
+      <LabRegist onClick={handleFormSubmit}></LabRegist>
       {cardRows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex mb-4">
           {row.map((cardNumber) => (
-            <div
-              key={cardNumber}
-              className="w-24 h-24 bg-gray-700 rounded-md flex items-center justify-center"
-            >
-              Card {cardNumber}
-            </div>
+            <Card key={cardNumber} number={cardNumber} />
           ))}
         </div>
       ))}
