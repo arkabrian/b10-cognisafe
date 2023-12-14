@@ -23,8 +23,8 @@ func NewPasetoMaker(key string) (Maker, error) {
 
 // VerifyToken(token string) (*Payload, error)
 
-func (p *PasetoMaker) GenerateToken(account_id uint, username string, duration time.Duration) (string, *Payload, error) {
-	payload := NewPayload(account_id, username, duration)
+func (p *PasetoMaker) GenerateToken(lab_id string, labname string, duration time.Duration) (string, *Payload, error) {
+	payload := NewPayload(lab_id, labname, duration)
 
 	token, err := p.pV2.Encrypt(p.key, payload, nil)
 	if err != nil {

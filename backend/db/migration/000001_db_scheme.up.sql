@@ -1,33 +1,50 @@
+CREATE SEQUENCE IF NOT EXISTS lab_id_seq;
 CREATE TABLE IF NOT EXISTS account (
-    account_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    lab_id VARCHAR(32) DEFAULT 'LID' || nextval('lab_id_seq') || to_char(current_timestamp, 'YYYYMMDDHH24MISS'),
+    labname VARCHAR(20) NOT NULL,
+    email VARCHAR(20) UNIQUE NOT NULL,
     password_hash VARCHAR(100) NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+    PRIMARY KEY (lab_id)
 );
 
--- CREATE TABLE IF NOT EXISTS deck (
---     deck_id SERIAL PRIMARY KEY,
---     account_id INT REFERENCES account(account_id) ON DELETE CASCADE NOT NULL,
---     title VARCHAR(255) NOT NULL,
---     created_at TIMESTAMP DEFAULT NOW()
--- );
+CREATE SEQUENCE IF NOT EXISTS lab_session_id_seq;
+CREATE TABLE IF NOT EXISTS LabSession (
+    lab_session_id VARCHAR(32) DEFAULT 'LSID' || nextval('lab_session_id_seq') || to_char(current_timestamp, 'YYYYMMDDHH24MISS'),
+    lab_id VARCHAR(32),
+    pic VARCHAR(48),
+    module_topic VARCHAR(255),
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    location VARCHAR(32),
+    attendance INT,
+       -- valid boolean DEFAULT TRUE,
+    indicator VARCHAR(255),
+    PRIMARY KEY (lab_session_id),
+    FOREIGN KEY (lab_id) REFERENCES account(lab_id)
+);
 
--- CREATE TABLE IF NOT EXISTS flashcard (
---     flashcard_id SERIAL PRIMARY KEY,
---     deck_id INT REFERENCES deck(deck_id) ON DELETE CASCADE NOT NULL,
---     question TEXT NOT NULL,
---     answer TEXT NOT NULL,
---     next_review_date TIMESTAMP,
---     interval INT,
---     repetitions INT,
---     easiness_factor DOUBLE PRECISION,
---     created_at TIMESTAMP DEFAULT NOW(),
---     updated_at TIMESTAMP DEFAULT NOW(),
---     is_archived BOOLEAN DEFAULT FALSE
--- );
+DROP TABLE IF EXISTS Attendance;
+CREATE TABLE IF NOT EXISTS Attendance (
+    lab_session_id VARCHAR(32),
+    ip_address VARCHAR(32),
+    mac_address VARCHAR(32),
+    fall INT DEfAULT 0,
+    gas INT DEFAULT 0,
+   -- FOREIGN KEY (valid) REFERENCES LabSession(valid)
+    PRIMARY KEY (lab_session_id, ip_address, mac_address),
+    FOREIGN KEY (lab_session_id) REFERENCES LabSession(lab_session_id)
+);
 
-CREATE INDEX IF NOT EXISTS idx_deck_account_id ON deck (account_id);
--- CREATE INDEX IF NOT EXISTS idx_flashcard_deck_id ON flashcard (deck_id);
--- CREATE INDEX IF NOT EXISTS idx_flashcard_next_review_date ON flashcard (next_review_date);
--- TO DO INDEX OF USERNAME
+CREATE TABLE IF NOT EXISTS Logging (
+    lab_session_id VARCHAR(32),
+    time_log TIMESTAMP,
+    ip_address VARCHAR(15),
+    report TEXT,
+    FOREIGN KEY (lab_session_id) REFERENCES LabSession(lab_session_id)
+);
+
+CREATE TABLE IF NOT EXISTS FallGas (
+    fall INT DEfAULT 0,
+    gas INT DEFAULT 0
+);

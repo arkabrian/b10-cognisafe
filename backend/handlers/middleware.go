@@ -23,10 +23,10 @@ func (h *Handler) handleRequest(hp HandlerParam, u *AuthedUser) {
 		return
 	}
 
-	err = checkAuthorization(hp.w, hp.r, u)
-	if err != nil {
-		return
-	}
+	// err = checkAuthorization(hp.w, hp.r, u)
+	// if err != nil {
+	// 	return
+	// }
 
 	err = hp.handlerFunc(hp.w, hp.r)
 	if err != nil {
@@ -89,8 +89,8 @@ func checkAuthorization(w http.ResponseWriter, r *http.Request, u *AuthedUser) e
 		return errors.New("invalid token")
 	}
 
-	u.UserID = payload.AccountID
-	u.Username = payload.Username
+	u.LabID = payload.LabID
+	u.Labname = payload.Labname
 
 	return nil
 }

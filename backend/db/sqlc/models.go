@@ -12,38 +12,49 @@ import (
 )
 
 type Account struct {
-	AccountID    int32        `json:"account_id"`
-	Username     string       `json:"username"`
+	LabID        string       `json:"lab_id"`
+	Labname      string       `json:"labname"`
 	Email        string       `json:"email"`
 	PasswordHash string       `json:"password_hash"`
 	CreatedAt    sql.NullTime `json:"created_at"`
 }
 
-type Deck struct {
-	DeckID    int32        `json:"deck_id"`
-	AccountID int32        `json:"account_id"`
-	Title     string       `json:"title"`
-	CreatedAt sql.NullTime `json:"created_at"`
+type Attendance struct {
+	LabSessionID string        `json:"lab_session_id"`
+	IpAddress    string        `json:"ip_address"`
+	MacAddress   string        `json:"mac_address"`
+	Fall         sql.NullInt32 `json:"fall"`
+	Gas          sql.NullInt32 `json:"gas"`
 }
 
-type Flashcard struct {
-	FlashcardID    int32           `json:"flashcard_id"`
-	DeckID         int32           `json:"deck_id"`
-	Question       string          `json:"question"`
-	Answer         string          `json:"answer"`
-	NextReviewDate sql.NullTime    `json:"next_review_date"`
-	Interval       sql.NullInt32   `json:"interval"`
-	Repetitions    sql.NullInt32   `json:"repetitions"`
-	EasinessFactor sql.NullFloat64 `json:"easiness_factor"`
-	CreatedAt      sql.NullTime    `json:"created_at"`
-	UpdatedAt      sql.NullTime    `json:"updated_at"`
-	IsArchived     sql.NullBool    `json:"is_archived"`
+type Fallga struct {
+	Fall sql.NullInt32 `json:"fall"`
+	Gas  sql.NullInt32 `json:"gas"`
+}
+
+type Labsession struct {
+	LabSessionID string         `json:"lab_session_id"`
+	LabID        sql.NullString `json:"lab_id"`
+	Pic          sql.NullString `json:"pic"`
+	ModuleTopic  sql.NullString `json:"module_topic"`
+	StartTime    sql.NullTime   `json:"start_time"`
+	EndTime      sql.NullTime   `json:"end_time"`
+	Location     sql.NullString `json:"location"`
+	Attendance   sql.NullInt32  `json:"attendance"`
+	Indicator    sql.NullString `json:"indicator"`
+}
+
+type Logging struct {
+	LabSessionID sql.NullString `json:"lab_session_id"`
+	TimeLog      sql.NullTime   `json:"time_log"`
+	IpAddress    sql.NullString `json:"ip_address"`
+	Report       sql.NullString `json:"report"`
 }
 
 type Session struct {
 	ID           uuid.UUID `json:"id"`
-	AccountID    int32     `json:"account_id"`
-	Username     string    `json:"username"`
+	LabID        string    `json:"lab_id"`
+	Labname      string    `json:"labname"`
 	RefreshToken string    `json:"refresh_token"`
 	IsBlocked    bool      `json:"is_blocked"`
 	ExpiresAt    time.Time `json:"expires_at"`

@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	ACCESS_TOKEN_DURATION  = 5
-	REFRESH_TOKEN_DURATION = 12
+	ACCESS_TOKEN_DURATION  = 60
+	REFRESH_TOKEN_DURATION = 120
 )
 
 func NewAuthHandler(l *log.Logger, q *sqlc.Queries, u *AuthedUser, t *token.Maker) *AuthHandler {
@@ -62,14 +62,14 @@ func (auth_h *AuthHandler) login(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	access_token_duration := time.Minute * ACCESS_TOKEN_DURATION
-	a_token, a_payload, err := auth_h.t.GenerateToken(uint(user.AccountID), user.Username, access_token_duration)
+	a_token, a_payload, err := auth_h.t.GenerateToken(user.LabID, user.Labname, access_token_duration)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return errors.New("failed generate access token for user")
 	}
 
 	refresh_token_duration := time.Hour * REFRESH_TOKEN_DURATION
-	r_token, r_payload, err := auth_h.t.GenerateToken(uint(user.AccountID), user.Username, refresh_token_duration)
+	r_token, r_payload, err := auth_h.t.GenerateToken(user.LabID, user.Labname, refresh_token_duration)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return errors.New("failed generate refresh token for user")
@@ -77,8 +77,8 @@ func (auth_h *AuthHandler) login(w http.ResponseWriter, r *http.Request) error {
 
 	sessionParams := sqlc.CreateSessionParams{
 		ID:           r_payload.ID,
-		AccountID:    int32(r_payload.AccountID),
-		Username:     r_payload.Username,
+		LabID:        r_payload.LabID,
+		Labname:      r_payload.Labname,
 		RefreshToken: r_token,
 		ExpiresAt:    r_payload.ExpiredAt,
 	}
@@ -95,8 +95,8 @@ func (auth_h *AuthHandler) login(w http.ResponseWriter, r *http.Request) error {
 		AccessTokenEx:  a_payload.ExpiredAt,
 		RefreshToken:   r_token,
 		RefreshTokenEx: r_payload.ExpiredAt,
-		UserID:         uint(user.AccountID),
-		Username:       user.Username,
+		LabID:          user.LabID,
+		Labname:        user.Labname,
 	}
 
 	w.WriteHeader(http.StatusCreated)
@@ -112,7 +112,7 @@ func (auth_h *AuthHandler) signup(w http.ResponseWriter, r *http.Request) error 
 	}
 
 	// Retrieve form values
-	username := r.FormValue("username")
+	labname := r.FormValue("labname")
 	email := r.FormValue("email")
 	password := r.FormValue("password")
 	hashedPassword, _ := utils.HashPassword(password)
@@ -131,7 +131,7 @@ func (auth_h *AuthHandler) signup(w http.ResponseWriter, r *http.Request) error 
 
 	// Create accountParams using retrieved form values
 	accountParams := sqlc.CreateAccountParams{
-		Username:     username,
+		Labname:      labname,
 		Email:        email,
 		PasswordHash: hashedPassword, // Don't forget to hash the password
 	}

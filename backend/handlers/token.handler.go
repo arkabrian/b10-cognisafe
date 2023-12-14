@@ -47,8 +47,8 @@ func (auth_h *AuthHandler) renewToken(w http.ResponseWriter, r *http.Request) er
 		return errors.New("session is blocked")
 	}
 
-	if session.AccountID != int32(refresh_payload.AccountID) ||
-		session.Username != refresh_payload.Username {
+	if session.LabID != refresh_payload.LabID ||
+		session.Labname != refresh_payload.Labname {
 		http.Error(w, "identity not match", http.StatusUnauthorized)
 		return errors.New("identity not match")
 	}
@@ -64,7 +64,7 @@ func (auth_h *AuthHandler) renewToken(w http.ResponseWriter, r *http.Request) er
 	}
 
 	access_token_duration := time.Minute * ACCESS_TOKEN_DURATION
-	a_token, a_payload, err := auth_h.t.GenerateToken(uint(session.AccountID), session.Username, access_token_duration)
+	a_token, a_payload, err := auth_h.t.GenerateToken(session.LabID, session.Labname, access_token_duration)
 	if err != nil {
 		http.Error(w, "Failed to generate new token", http.StatusInternalServerError)
 		return errors.New("failed generate new access token for user")

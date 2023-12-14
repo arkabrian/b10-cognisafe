@@ -7,6 +7,7 @@ import (
 
 	"cognisafe.com/b/db/sqlc"
 	"cognisafe.com/b/token"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 )
 
@@ -26,12 +27,13 @@ type AccountHandler struct {
 	h *Handler
 }
 
-type DeckHandler struct {
+type LabHandler struct {
 	h *Handler
 }
 
-type CardHandler struct {
-	h *Handler
+type MQTTHandler struct {
+	h          *Handler
+	mqttClient mqtt.Client
 }
 
 type HandlerParam struct {
@@ -42,8 +44,8 @@ type HandlerParam struct {
 }
 
 type AuthedUser struct {
-	UserID   uint   `json:"user_id"`
-	Username string `json:"username"`
+	LabID   string `json:"lab_id"`
+	Labname string `json:"labname"`
 }
 
 type LoginUserResponse struct {
@@ -52,12 +54,8 @@ type LoginUserResponse struct {
 	AccessTokenEx  time.Time `json:"access_token_expire"`
 	RefreshToken   string    `json:"refresh_token"`
 	RefreshTokenEx time.Time `json:"refresh_token_expire"`
-	UserID         uint      `json:"user_id"`
-	Username       string    `json:"username"`
-}
-
-type renewAccessTokenRequest struct {
-	RefreshToken string `json:"refresh_token" binding:"required"`
+	LabID          string    `json:"lab_id"`
+	Labname        string    `json:"labname"`
 }
 
 type renewAccessTokenResponse struct {

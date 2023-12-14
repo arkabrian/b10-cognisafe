@@ -9,13 +9,13 @@ import (
 // struct of payload
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
-	AccountID uint      `json:"account_id"`
-	Username  string    `json:"username"`
+	LabID     string    `json:"lab_id"`
+	Labname   string    `json:"labname"`
 	IssuedAt  time.Time `json:"issued_at"`
 	ExpiredAt time.Time `json:"expired_at"`
 }
 
-func NewPayload(account_id uint, username string, duration time.Duration) *Payload {
+func NewPayload(lab_id string, labname string, duration time.Duration) *Payload {
 	token_id, err := uuid.NewRandom()
 	if err != nil {
 		return nil
@@ -23,8 +23,8 @@ func NewPayload(account_id uint, username string, duration time.Duration) *Paylo
 
 	return &Payload{
 		ID:        token_id,
-		AccountID: account_id,
-		Username:  username,
+		LabID:     lab_id,
+		Labname:   labname,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}
